@@ -21,7 +21,6 @@ El sistema permite:
 - Java CUP 11b
 
 ## Estructura del proyecto
-## Estructura del Proyecto
 
 ```text
 HOC3/
