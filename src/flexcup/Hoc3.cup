@@ -1,0 +1,108 @@
+package flexcup;
+import src.*;
+
+import java_cup.runtime.*;
+import java.io.FileReader;
+
+class AnalizadorSintac;
+
+parser code {:
+    public Principal FrmMen;
+
+    public void RepError(String Mensaje, Object Info){
+        StringBuilder m = new StringBuilder("Error");
+        if(Info instanceof java_cup.runtime.Symbol){
+            java_cup.runtime.Symbol s = (java_cup.runtime.Symbol) Info;
+            if(s.left>=0){
+                m.append(" en la linea " + (s.left+1));
+                if(s.right>=0)
+                    m.append(", columna " + (s.right+1));
+            }
+        }
+        m.append(" : " + Mensaje);
+        System.err.println(m);
+    }
+    
+    public void RepFatError(String Mensaje, Object Info){
+        RepError(Mensaje,Info);
+        System.exit(1);
+    }
+:}
+
+terminal OpSum, OpRes, OpProd, OpDiv, OpAsig, OpPot;
+terminal ParIzq, ParDer, SEMIC;
+terminal float NUM;
+terminal SymbolHoc VAR;
+terminal SymbolHoc CONST_PRED;
+terminal SymbolHoc BLTIN;
+terminal NEGUNAR;
+
+non terminal list;
+non terminal Float asign, expr;
+
+/*JERARQUIA DE OPERACIONES*/
+precedence right OpAsig;
+precedence left OpSum, OpRes;
+precedence left OpProd, OpDiv;
+precedence left NEGUNAR;
+precedence right OpPot;
+
+list ::= expr:valExpr SEMIC {:
+        System.out.println(Float.toString(valExpr)+"\n");
+        FrmMen.agregarResultado(Float.toString(valExpr));
+    :}
+| list expr:valExpr SEMIC {:
+        System.out.println(Float.toString(valExpr)+"\n");
+        FrmMen.agregarResultado(Float.toString(valExpr));
+    :};
+
+asign ::= VAR:v OpAsig expr:valExpr{:
+    v.val = valExpr;
+    RESULT = valExpr;
+:};
+
+expr ::=  NUM:valNum {: RESULT = valNum;:}
+    |VAR:refVar {: RESULT = refVar.val;:}
+    |CONST_PRED:ConsPred {: RESULT = ConsPred.val;:}
+    |asign:valAsig {: RESULT = valAsig;:}
+    |expr:val1 OpSum expr:val2 {: RESULT = val1 + val2;:}
+    |expr:val1 OpRes expr:val2 {: RESULT = val1 - val2;:}
+    |expr:val1 OpDiv expr:val2 {: RESULT = val1 / val2;:}
+    |expr:val1 OpProd expr:val2 {: RESULT = val1 * val2;:}
+    |ParIzq expr:val1 ParDer {: RESULT = val1;:}
+    |BLTIN:v ParIzq expr:val1 ParDer {:
+        switch(v.FuncPred){
+            case SIN:
+                RESULT = (float)Math.sin((double)val1);
+                break;
+            case COS:
+                RESULT = (float)Math.cos((double)val1);
+                break;
+            case ATAN:
+                RESULT = (float)Math.atan((double)val1);
+                break;
+            case LOG:
+                RESULT = (float)Math.log((double)val1);
+                break;
+            case LOG10:
+                RESULT = (float)Math.log10((double)val1);
+                break;
+            case EXP:
+                RESULT = (float)Math.exp((double)val1);
+                break;
+            case SQRT:
+                RESULT = (float)Math.sqrt((double)val1);
+                break;
+            case INT:
+                RESULT = (float)Math.floor((double)val1);
+                break;
+            case ABS:
+                RESULT = (float)Math.abs((double)val1);
+                break;
+        }
+    :}
+    | OpRes expr:val1 {: RESULT = - val1;:} %prec NEGUNAR
+    | expr:base OpPot expr:expo {:
+        RESULT = (float)Math.pow((double) base, (double) expo);
+    :}
+;
