@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileReader;
 import java_cup.runtime.*;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -31,6 +32,7 @@ public class Principal extends javax.swing.JFrame {
         initComponents();
         btnLex.addActionListener(e -> AnalizarLex());
         btnSintac.addActionListener(e -> AnalizarSin());
+        btnExec.addActionListener(e -> Exect());
     }
 
     /**
@@ -46,11 +48,19 @@ public class Principal extends javax.swing.JFrame {
         TxtCadenas = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         btnLex = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        txtResult = new javax.swing.JTextArea();
         jScrollPane5 = new javax.swing.JScrollPane();
         TxtLexico = new javax.swing.JTextArea();
         btnSintac = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblInstance = new javax.swing.JTable();
+        btnExec = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblPila = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtResult = new javax.swing.JTextArea();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        TxtRes = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -67,23 +77,67 @@ public class Principal extends javax.swing.JFrame {
 
         btnLex.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnLex.setText("Analizar Lexicamente");
-        getContentPane().add(btnLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 10, -1, -1));
-
-        txtResult.setColumns(20);
-        txtResult.setRows(5);
-        jScrollPane4.setViewportView(txtResult);
-
-        getContentPane().add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, 380, 300));
+        getContentPane().add(btnLex, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 10, -1, -1));
 
         TxtLexico.setColumns(20);
         TxtLexico.setRows(5);
         jScrollPane5.setViewportView(TxtLexico);
 
-        getContentPane().add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 40, 460, 310));
+        getContentPane().add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 40, 460, 310));
 
         btnSintac.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnSintac.setText("Analizar Sintacticamente");
-        getContentPane().add(btnSintac, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, -1, -1));
+        getContentPane().add(btnSintac, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 10, -1, -1));
+
+        tblInstance.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Symb-Func", "Nombre", "Val", "Funcion"
+            }
+        ));
+        jScrollPane2.setViewportView(tblInstance);
+
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 390, -1, 310));
+
+        btnExec.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnExec.setText("Ejecutar codigo");
+        getContentPane().add(btnExec, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, -1, -1));
+
+        tblPila.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Datum", "Valor", "Simbolo", "Tipo", "Valor"
+            }
+        ));
+        jScrollPane3.setViewportView(tblPila);
+
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 400, 450, 310));
+
+        txtResult.setColumns(20);
+        txtResult.setRows(5);
+        jScrollPane4.setViewportView(txtResult);
+
+        getContentPane().add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(890, 50, 380, 300));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel2.setText("PILA");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, -1, -1));
+
+        TxtRes.setColumns(20);
+        TxtRes.setRows(5);
+        jScrollPane6.setViewportView(TxtRes);
+
+        getContentPane().add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 400, 280, 320));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -144,6 +198,7 @@ public class Principal extends javax.swing.JFrame {
             Lector = new FileReader("ArchEnt.txt");
             
             AnalizadorLexico Lex = new AnalizadorLexico(Lector);
+            Lex.Maquina = new MaqHOC();
             do{
                 simb = Lex.next_token();
                 CadAux = Integer.toString(simb.sym);
@@ -207,25 +262,198 @@ public class Principal extends javax.swing.JFrame {
     }
     
     public void AnalizarSin(){
+        
         String CadAux = new String();
         String CadInst = new String();
         String Name = new String();
         String Valor = new String();
         String ptrFunc = new String();
-        
+        Object os[] = new Object[4];
+        InstruProg Instruc;
         txtResult.setText("");
         AnalizadorLexico Lex = null;
+        DefaultTableModel Modelo = (DefaultTableModel) tblInstance.getModel();
         try{
             Lex = new AnalizadorLexico(new FileReader("ArchEnt.txt"));
         } catch(FileNotFoundException ex){
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE,null,ex);
         }
-        Sintac = new AnalizadorSintac(Lex);
         
-        Sintac.FrmMen = this;
-        
+        Modelo.setRowCount(0);
         try{
-            Object result = Sintac.parse().value;
+           Sintac = new AnalizadorSintac(Lex);
+           Sintac.FrmMen = this;
+           Sintac.Maq = new MaqHOC();
+           Lex.Maquina = Sintac.Maq;
+           SymbolHoc s;
+           Iterator it = Lex.Maquina.Tabs.ListaSymb.iterator();
+           while(it.hasNext()){
+               s=(SymbolHoc) it.next();
+               CadAux = "\n------------------\n \t Symbol:" + s.Nom + "\n------------------\n";
+               TxtLexico.append(CadAux);
+           }
+
+
+Object result = Sintac.parse().value;
+    InstruProg in2 = new InstruProg();
+    in2.TipInst = EnumTipInst.INSTRUC;
+    in2.Instruccion = EnumMaq.STOP;
+    Sintac.Maq.code(in2);
+System.out.println("Codigo generado: " + Sintac.Maq.progp);
+           agregarResultado("\n FIN DEL ANALISIS SINTACTICO");
+           for(int i=0; i<Sintac.Maq.progp;i++){
+               CadInst = ""; Name = ""; Valor = ""; ptrFunc = "";
+               Instruc=Sintac.Maq.Prog[i];
+               CadAux = "\n------------------ERROR------------------\n";
+               switch(Instruc.TipInst){
+                   case INSTRUC:
+                       switch(Instruc.Instruccion){
+                           case ADD:
+                               CadAux = "instruc ADD";
+                               CadInst="ADD";
+                               break;
+                            case ASIGN:
+                               CadAux = "instruc ASIGN";
+                               CadInst="ASIGN";
+                               break;
+                            case BLTIN:
+                               CadAux = "instruc BLTIN";
+                               CadInst="BLTIN";
+                               break;
+                            case CONSTPUSH:
+                               CadAux = "instruc CONSTPUSH";
+                               CadInst="CONSTPUSH";
+                               break;
+                            case DIV:
+                               CadAux = "instruc DIV";
+                               CadInst="DIV";
+                               break;
+                            case EVAL:
+                               CadAux = "instruc EVAL";
+                               CadInst="EVAL";
+                               break;
+                            case MUL:
+                               CadAux = "instruc MUL";
+                               CadInst="MUL";
+                               break;
+                            case NEGATE:
+                               CadAux = "instruc NEGATE";
+                               CadInst="NEGATE";
+                               break;
+                            case POWER:
+                               CadAux = "instruc POWER";
+                               CadInst="POWER";
+                               break;
+                            case PRINT:
+                               CadAux = "instruc PRINT";
+                               CadInst="PRINT";
+                               break;
+                            case STOP:
+                               CadAux = "instruc STOP";
+                               CadInst="STOP";
+                               break;
+                             case SUB:
+                               CadAux = "instruc SUB";
+                               CadInst="SUB";
+                               break;
+                            case VARPUSH:
+                               CadAux = "instruc VARPUSH";
+                               CadInst="VARPUSH";
+                               break;
+                       }
+                       CadAux+= "\n";
+                       TxtLexico.append(CadAux);
+                       break;
+                   case BLTIN:
+                       CadInst="FuncPred";
+                       switch(Instruc.Func_BLTIN){
+                           case SIN:
+                               CadAux = "Bltin SIN";
+                               Name = "SIN"; 
+                               ptrFunc = "SIN";
+                               break;
+                           case COS:
+                               CadAux = "Bltin COS";
+                               Name = "COS"; 
+                               ptrFunc = "COS";
+                               break;
+                           case ATAN:
+                               CadAux = "Bltin ATAN";
+                               Name = "ATAN"; 
+                               ptrFunc = "ATAN";
+                               break;
+                           case LOG: 
+                               CadAux = "Bltin LOG";
+                               Name = "LOG"; 
+                               ptrFunc = "LOG";
+                               break;
+                           case LOG10:
+                               CadAux = "Bltin LOG10";
+                               Name = "LOG10"; 
+                               ptrFunc = "LOG10";
+                               break;
+                           case EXP:
+                               CadAux = "Bltin EXP";
+                               Name = "EXP"; 
+                               ptrFunc = "EXP";
+                               break;
+                           case SQRT:
+                               CadAux = "Bltin SQRT";
+                               Name = "SQRT"; 
+                               ptrFunc = "SQRT";
+                               break; 
+                           case INT: 
+                               CadAux = "Bltin INT";
+                               Name = "INT"; 
+                               ptrFunc = "INT";
+                               break;
+                           case ABS:
+                               CadAux = "Bltin ABS";
+                               Name = "ABS"; 
+                               ptrFunc = "ABS";
+                               break;
+                       }
+                       CadAux+= "\n";
+                       TxtLexico.append(CadAux);
+                       break;
+                   case SYMBOL:
+                       CadAux = "Symbol Name:" + Instruc.SymHoc.Nom + "Val=" + Float.toString(Instruc.SymHoc.val);
+                       CadAux+= "\n";
+                       TxtLexico.append(CadAux);
+                       switch(Instruc.SymHoc.TipoSim){
+                           case VAR:
+                                CadInst="VAR";
+                               Name = Instruc.SymHoc.Nom;
+                               Valor = Float.toString(Instruc.SymHoc.val);
+                               ptrFunc = "";
+                                break;
+                           case UNDEF:
+                                CadInst="UNDEF";
+                               Name = Instruc.SymHoc.Nom;
+                               Valor = "--";
+                               ptrFunc = "";
+                                break;
+                           case CONST_NUM:
+                                CadInst="CONST_NUM";
+                               Name = Instruc.SymHoc.Nom;
+                               Valor = Float.toString(Instruc.SymHoc.val);
+                               ptrFunc = "";
+                                break;
+                           case CONST_PRED:
+                                CadInst="CONST_PRED";
+                               Name = Instruc.SymHoc.Nom;
+                               Valor = Float.toString(Instruc.SymHoc.val);
+                               ptrFunc = "";
+                                break;
+                       }
+                       break;
+               }
+               os[0]=(Object)CadInst ;
+               os[1]=(Object)Name ;
+               os[2]=(Object)Valor ;
+               os[3]=(Object)ptrFunc ;
+               Modelo.addRow(os);
+           }
         } catch(Exception ex){
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE,null,ex);
         }
@@ -233,15 +461,52 @@ public class Principal extends javax.swing.JFrame {
     public void agregarResultado(String texto){
     txtResult.append(texto + "\n");
 }
+    public void Exect(){
+        System.out.println("progp = " + Sintac.Maq.progp);
+
+for(int i = 0; i < Sintac.Maq.progp; i++){
+    System.out.println(
+        i + " -> " +
+        (Sintac.Maq.Prog[i] == null ?
+         "NULL" :
+         Sintac.Maq.Prog[i].TipInst)
+    );
+}
+        String Cad1 = new String();        
+        String Cad2 = new String();        
+        String Cad3 = new String();        
+        String Cad4 = new String();        
+        String Cad5 = new String();
+        Object os[] = new Object[5];
+        DefaultTableModel Modelo = (DefaultTableModel) tblPila.getModel();
+        Modelo.setNumRows(0);
+        TxtRes.setText("");
+        os[0]=Cad1;
+        os[1]=Cad2;
+        os[2]=Cad3;
+        os[3]=Cad4;
+        os[4]=Cad5;
+        Modelo.addRow(os);
+        Modelo.fireTableDataChanged();
+        Sintac.Maq.exec(0, TxtRes, this.tblPila);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea TxtCadenas;
     private javax.swing.JTextArea TxtLexico;
+    private javax.swing.JTextArea TxtRes;
+    private javax.swing.JButton btnExec;
     private javax.swing.JButton btnLex;
     private javax.swing.JButton btnSintac;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTable tblInstance;
+    private javax.swing.JTable tblPila;
     private javax.swing.JTextArea txtResult;
     // End of variables declaration//GEN-END:variables
 }

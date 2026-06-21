@@ -13,6 +13,7 @@ import java.io.Reader;
 %{
     public SymbolHoc s;
     public int TipSimb;
+    public MaqHOC Maquina;
 
     TabSymb ListSimb = new TabSymb();
 
@@ -29,8 +30,8 @@ Digito=[0-9]
 %%
 [ \t\n]+            { ;}
 ";"                 { return symbol(AnalizadorSintacSym.SEMIC); }
-{Digito}+(\.{Digito}+)?                 {
-                        return symbol(AnalizadorSintacSym.NUM, new Float(yytext()));
+{Digito}+(\.{Digito}+)?                 { s=new SymbolHoc("",EnumTipSim.CONST_NUM, new Float(yytext()));
+                        return symbol(AnalizadorSintacSym.NUM,s);
                         }
 "="                 { return symbol(AnalizadorSintacSym.OpAsig); }
 "/"                 { return symbol(AnalizadorSintacSym.OpDiv); }
@@ -42,9 +43,9 @@ Digito=[0-9]
 \^                 { return symbol(AnalizadorSintacSym.OpPot); }
 {Letra}({Letra}|{Digito})*      {
 
-        s = ListSimb.lookup(yytext());
+        s = Maquina.Tabs.lookup(yytext());
         if(s ==null)
-            s=ListSimb.install(yytext(), EnumTipSim.UNDEF, (float)0.0);
+            s=Maquina.Tabs.install(yytext(), EnumTipSim.UNDEF, (float)0.0);
         switch(s.TipoSim){
             case VAR: 
                 TipSimb = AnalizadorSintacSym.VAR;

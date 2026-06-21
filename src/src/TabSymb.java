@@ -41,7 +41,7 @@ public class TabSymb {
         ListaSymb.add(s);
         return s;
     }
-    private void init(){
+    public void init(){
         ListaSymb.clear();
         InitConstPredef();
         InitFuncPredef();

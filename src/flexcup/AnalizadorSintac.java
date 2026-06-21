@@ -67,12 +67,12 @@ public class AnalizadorSintac extends java_cup.runtime.lr_parser {
     "\015\004\016\006\017\005\020\013\001\002\000\016\005" +
     "\010\012\014\015\004\016\006\017\005\020\013\001\002" +
     "\000\020\004\ufff5\005\ufff5\006\ufff5\007\ufff5\011\ufff5\013" +
-    "\ufff5\014\ufff5\001\002\000\020\004\ufff6\005\ufff6\006\ufff6" +
-    "\007\ufff6\011\016\013\ufff6\014\ufff6\001\002\000\020\004" +
+    "\ufff5\014\ufff5\001\002\000\020\004\ufff7\005\ufff7\006\ufff7" +
+    "\007\ufff7\011\016\013\ufff7\014\ufff7\001\002\000\020\004" +
     "\ufff9\005\ufff9\006\022\007\017\011\016\013\ufff9\014\ufff9" +
     "\001\002\000\020\004\ufff8\005\ufff8\006\022\007\017\011" +
-    "\016\013\ufff8\014\ufff8\001\002\000\020\004\ufff7\005\ufff7" +
-    "\006\ufff7\007\ufff7\011\016\013\ufff7\014\ufff7\001\002\000" +
+    "\016\013\ufff8\014\ufff8\001\002\000\020\004\ufff6\005\ufff6" +
+    "\006\ufff6\007\ufff6\011\016\013\ufff6\014\ufff6\001\002\000" +
     "\020\004\ufff2\005\ufff2\006\ufff2\007\ufff2\011\016\013\ufff2" +
     "\014\ufff2\001\002\000\016\005\010\012\014\015\004\016" +
     "\006\017\005\020\013\001\002\000\016\004\021\005\020" +
@@ -147,6 +147,8 @@ public class AnalizadorSintac extends java_cup.runtime.lr_parser {
 
 
     public Principal FrmMen;
+    public Float var[] = new Float[26];
+    public MaqHOC Maq; 
 
     public void RepError(String Mensaje, Object Info){
         StringBuilder m = new StringBuilder("Error");
@@ -196,13 +198,17 @@ class CUP$AnalizadorSintac$actions {
           case 0: // list ::= expr SEMIC 
             {
               Object RESULT =null;
-		int valExprleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).left;
-		int valExprright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).right;
-		Float valExpr = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).value;
 		
-        System.out.println(Float.toString(valExpr)+"\n");
-        FrmMen.agregarResultado(Float.toString(valExpr));
-    
+    InstruProg in1 = new InstruProg();
+    in1.TipInst = EnumTipInst.INSTRUC;
+    in1.Instruccion = EnumMaq.PRINT;
+    /*
+    InstruProg in2 = new InstruProg();
+    in2.TipInst = EnumTipInst.INSTRUC;
+    in2.Instruccion = EnumMaq.STOP;*/
+
+    Maq.code(in1);
+
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("list",0, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -225,13 +231,17 @@ class CUP$AnalizadorSintac$actions {
           case 2: // list ::= list expr SEMIC 
             {
               Object RESULT =null;
-		int valExprleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).left;
-		int valExprright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).right;
-		Float valExpr = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).value;
 		
-        System.out.println(Float.toString(valExpr)+"\n");
-        FrmMen.agregarResultado(Float.toString(valExpr));
-    
+    InstruProg in1 = new InstruProg();
+    in1.TipInst = EnumTipInst.INSTRUC;
+    in1.Instruccion = EnumMaq.PRINT;
+    /*
+    InstruProg in2 = new InstruProg();
+    in2.TipInst = EnumTipInst.INSTRUC;
+    in2.Instruccion = EnumMaq.STOP;*/
+
+    Maq.code(in1);
+
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("list",0, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -239,17 +249,24 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 3: // asign ::= VAR OpAsig expr 
             {
-              Float RESULT =null;
+              Integer RESULT =null;
 		int vleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
 		int vright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
 		SymbolHoc v = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int valExprleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int valExprright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float valExpr = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
 		
-    v.val = valExpr;
-    RESULT = valExpr;
+                InstruProg in1 = new InstruProg(); 
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.VARPUSH;
 
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = v;
+
+                 InstruProg in3 = new InstruProg();
+                in3.TipInst = EnumTipInst.INSTRUC;
+                in3.Instruccion = EnumMaq.ASIGN;
+                RESULT = Maq.code3(in1, in2, in3);
+                  
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("asign",1, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -257,11 +274,20 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 4: // expr ::= NUM 
             {
-              Float RESULT =null;
-		int valNumleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int valNumright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		float valNum = (float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = valNum;
+              Integer RESULT =null;
+		int nleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
+		int nright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
+		SymbolHoc n = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.CONSTPUSH;
+
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = n;
+                RESULT = Maq.code2 (in1, in2);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -269,11 +295,26 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 5: // expr ::= VAR 
             {
-              Float RESULT =null;
-		int refVarleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int refVarright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		SymbolHoc refVar = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = refVar.val;
+              Integer RESULT =null;
+		int Vleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
+		int Vright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
+		SymbolHoc V = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
+		 
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.VARPUSH;
+                
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = V;
+                
+                InstruProg in3 = new InstruProg();
+              
+                in3.TipInst = EnumTipInst.INSTRUC;
+                in3.Instruccion = EnumMaq.EVAL;
+
+                RESULT = Maq.code3(in1, in2, in3);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -281,11 +322,20 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 6: // expr ::= CONST_PRED 
             {
-              Float RESULT =null;
-		int ConsPredleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int ConsPredright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		SymbolHoc ConsPred = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = ConsPred.val;
+              Integer RESULT =null;
+		int nleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
+		int nright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
+		SymbolHoc n = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.CONSTPUSH;
+
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = n;
+                RESULT = Maq.code2(in1, in2);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -293,11 +343,11 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 7: // expr ::= asign 
             {
-              Float RESULT =null;
-		int valAsigleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int valAsigright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float valAsig = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = valAsig;
+              Integer RESULT =null;
+		int indleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
+		int indright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
+		Integer ind = (Integer)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
+		 RESULT = ind; 
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -305,14 +355,13 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 8: // expr ::= expr OpSum expr 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int val2left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int val2right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float val2 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = val1 + val2;
+              Integer RESULT =null;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.ADD;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -320,44 +369,41 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 9: // expr ::= expr OpRes expr 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int val2left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int val2right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float val2 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = val1 - val2;
+              Integer RESULT =null;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.SUB;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 10: // expr ::= expr OpDiv expr 
+          case 10: // expr ::= expr OpProd expr 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int val2left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int val2right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float val2 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = val1 / val2;
+              Integer RESULT =null;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.MUL;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 11: // expr ::= expr OpProd expr 
+          case 11: // expr ::= expr OpDiv expr 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int val2left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int val2right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float val2 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = val1 * val2;
+              Integer RESULT =null;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.DIV;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -365,11 +411,11 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 12: // expr ::= ParIzq expr ParDer 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).value;
-		 RESULT = val1;
+              Integer RESULT =null;
+		int indleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).left;
+		int indright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).right;
+		Integer ind = (Integer)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).value;
+		 RESULT = ind; 
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -377,44 +423,20 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 13: // expr ::= BLTIN ParIzq expr ParDer 
             {
-              Float RESULT =null;
+              Integer RESULT =null;
 		int vleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-3)).left;
 		int vright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-3)).right;
 		SymbolHoc v = (SymbolHoc)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-3)).value;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)).value;
 		
-        switch(v.FuncPred){
-            case SIN:
-                RESULT = (float)Math.sin((double)val1);
-                break;
-            case COS:
-                RESULT = (float)Math.cos((double)val1);
-                break;
-            case ATAN:
-                RESULT = (float)Math.atan((double)val1);
-                break;
-            case LOG:
-                RESULT = (float)Math.log((double)val1);
-                break;
-            case LOG10:
-                RESULT = (float)Math.log10((double)val1);
-                break;
-            case EXP:
-                RESULT = (float)Math.exp((double)val1);
-                break;
-            case SQRT:
-                RESULT = (float)Math.sqrt((double)val1);
-                break;
-            case INT:
-                RESULT = (float)Math.floor((double)val1);
-                break;
-            case ABS:
-                RESULT = (float)Math.abs((double)val1);
-                break;
-        }
-    
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.BLTIN;
+                
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.BLTIN;
+                in2.Func_BLTIN = v.FuncPred;
+                RESULT = Maq.code2 (in1, in2);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-3)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -422,11 +444,13 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 14: // expr ::= OpRes expr 
             {
-              Float RESULT =null;
-		int val1left = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int val1right = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float val1 = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
-		 RESULT = - val1;
+              Integer RESULT =null;
+		
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.NEGATE;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-1)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;
@@ -434,16 +458,13 @@ class CUP$AnalizadorSintac$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 15: // expr ::= expr OpPot expr 
             {
-              Float RESULT =null;
-		int baseleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).left;
-		int baseright = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).right;
-		Float base = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)).value;
-		int expoleft = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).left;
-		int exporight = ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()).right;
-		Float expo = (Float)((java_cup.runtime.Symbol) CUP$AnalizadorSintac$stack.peek()).value;
+              Integer RESULT =null;
 		
-        RESULT = (float)Math.pow((double) base, (double) expo);
-    
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.POWER;
+                RESULT = Maq.code(in1);
+                
               CUP$AnalizadorSintac$result = parser.getSymbolFactory().newSymbol("expr",2, ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.elementAt(CUP$AnalizadorSintac$top-2)), ((java_cup.runtime.Symbol)CUP$AnalizadorSintac$stack.peek()), RESULT);
             }
           return CUP$AnalizadorSintac$result;

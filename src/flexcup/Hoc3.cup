@@ -8,6 +8,8 @@ class AnalizadorSintac;
 
 parser code {:
     public Principal FrmMen;
+    public Float var[] = new Float[26];
+    public MaqHOC Maq; 
 
     public void RepError(String Mensaje, Object Info){
         StringBuilder m = new StringBuilder("Error");
@@ -31,14 +33,14 @@ parser code {:
 
 terminal OpSum, OpRes, OpProd, OpDiv, OpAsig, OpPot;
 terminal ParIzq, ParDer, SEMIC;
-terminal float NUM;
+terminal SymbolHoc NUM;
 terminal SymbolHoc VAR;
 terminal SymbolHoc CONST_PRED;
 terminal SymbolHoc BLTIN;
 terminal NEGUNAR;
 
 non terminal list;
-non terminal Float asign, expr;
+non terminal Integer asign, expr;
 
 /*JERARQUIA DE OPERACIONES*/
 precedence right OpAsig;
@@ -47,62 +49,127 @@ precedence left OpProd, OpDiv;
 precedence left NEGUNAR;
 precedence right OpPot;
 
-list ::= expr:valExpr SEMIC {:
-        System.out.println(Float.toString(valExpr)+"\n");
-        FrmMen.agregarResultado(Float.toString(valExpr));
-    :}
-| list expr:valExpr SEMIC {:
-        System.out.println(Float.toString(valExpr)+"\n");
-        FrmMen.agregarResultado(Float.toString(valExpr));
-    :};
+list ::= expr SEMIC
+{:
+    InstruProg in1 = new InstruProg();
+    in1.TipInst = EnumTipInst.INSTRUC;
+    in1.Instruccion = EnumMaq.PRINT;
+    /*
+    InstruProg in2 = new InstruProg();
+    in2.TipInst = EnumTipInst.INSTRUC;
+    in2.Instruccion = EnumMaq.STOP;*/
 
-asign ::= VAR:v OpAsig expr:valExpr{:
-    v.val = valExpr;
-    RESULT = valExpr;
+    Maq.code(in1);
+:}
+    | list expr SEMIC {:
+    InstruProg in1 = new InstruProg();
+    in1.TipInst = EnumTipInst.INSTRUC;
+    in1.Instruccion = EnumMaq.PRINT;
+    /*
+    InstruProg in2 = new InstruProg();
+    in2.TipInst = EnumTipInst.INSTRUC;
+    in2.Instruccion = EnumMaq.STOP;*/
+
+    Maq.code(in1);
 :};
+asign ::= VAR:v OpAsig expr {:
+                InstruProg in1 = new InstruProg(); 
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.VARPUSH;
 
-expr ::=  NUM:valNum {: RESULT = valNum;:}
-    |VAR:refVar {: RESULT = refVar.val;:}
-    |CONST_PRED:ConsPred {: RESULT = ConsPred.val;:}
-    |asign:valAsig {: RESULT = valAsig;:}
-    |expr:val1 OpSum expr:val2 {: RESULT = val1 + val2;:}
-    |expr:val1 OpRes expr:val2 {: RESULT = val1 - val2;:}
-    |expr:val1 OpDiv expr:val2 {: RESULT = val1 / val2;:}
-    |expr:val1 OpProd expr:val2 {: RESULT = val1 * val2;:}
-    |ParIzq expr:val1 ParDer {: RESULT = val1;:}
-    |BLTIN:v ParIzq expr:val1 ParDer {:
-        switch(v.FuncPred){
-            case SIN:
-                RESULT = (float)Math.sin((double)val1);
-                break;
-            case COS:
-                RESULT = (float)Math.cos((double)val1);
-                break;
-            case ATAN:
-                RESULT = (float)Math.atan((double)val1);
-                break;
-            case LOG:
-                RESULT = (float)Math.log((double)val1);
-                break;
-            case LOG10:
-                RESULT = (float)Math.log10((double)val1);
-                break;
-            case EXP:
-                RESULT = (float)Math.exp((double)val1);
-                break;
-            case SQRT:
-                RESULT = (float)Math.sqrt((double)val1);
-                break;
-            case INT:
-                RESULT = (float)Math.floor((double)val1);
-                break;
-            case ABS:
-                RESULT = (float)Math.abs((double)val1);
-                break;
-        }
-    :}
-    | OpRes expr:val1 {: RESULT = - val1;:} %prec NEGUNAR
-    | expr:base OpPot expr:expo {:
-        RESULT = (float)Math.pow((double) base, (double) expo);
-    :}
-;
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = v;
+
+                 InstruProg in3 = new InstruProg();
+                in3.TipInst = EnumTipInst.INSTRUC;
+                in3.Instruccion = EnumMaq.ASIGN;
+                RESULT = Maq.code3(in1, in2, in3);
+                  :};
+
+expr  ::= NUM:n {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.CONSTPUSH;
+
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = n;
+                RESULT = Maq.code2 (in1, in2);
+                :}
+    | VAR:V {: 
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.VARPUSH;
+                
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = V;
+                
+                InstruProg in3 = new InstruProg();
+              
+                in3.TipInst = EnumTipInst.INSTRUC;
+                in3.Instruccion = EnumMaq.EVAL;
+
+                RESULT = Maq.code3(in1, in2, in3);
+                :}
+    | CONST_PRED:n {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.CONSTPUSH;
+
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.SYMBOL;
+                in2.SymHoc = n;
+                RESULT = Maq.code2(in1, in2);
+                :}
+    | asign:ind {: RESULT = ind; :}
+    | expr OpSum expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.ADD;
+                RESULT = Maq.code(in1);
+                :}
+    | expr OpRes expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.SUB;
+                RESULT = Maq.code(in1);
+                :}
+    | expr OpProd expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.MUL;
+                RESULT = Maq.code(in1);
+                :}
+    | expr OpDiv expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.DIV;
+                RESULT = Maq.code(in1);
+                :}
+    | ParIzq expr:ind ParDer {: RESULT = ind; :}
+    | BLTIN:v ParIzq expr ParDer {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.BLTIN;
+                
+                InstruProg in2 = new InstruProg();
+                in2.TipInst = EnumTipInst.BLTIN;
+                in2.Func_BLTIN = v.FuncPred;
+                RESULT = Maq.code2 (in1, in2);
+                :}
+    | OpRes expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.NEGATE;
+                RESULT = Maq.code(in1);
+                :}
+                %prec NEGUNAR
+    | expr OpPot expr {:
+                InstruProg in1 = new InstruProg();
+                in1.TipInst = EnumTipInst.INSTRUC;
+                in1.Instruccion = EnumMaq.POWER;
+                RESULT = Maq.code(in1);
+                :}
+    ;

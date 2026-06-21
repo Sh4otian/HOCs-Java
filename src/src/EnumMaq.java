@@ -8,6 +8,6 @@ package src;
  *
  * @author Admin
  */
-public enum EnumTipSim {
-    VAR, UNDEF, BLTIN, CONST_PRED, CONST_NUM;
+public enum EnumMaq {
+    EVAL,ADD,SUB,MUL,DIV,NEGATE,POWER,ASIGN,BLTIN,VARPUSH,CONSTPUSH,PRINT,STOP;
 }

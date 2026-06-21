@@ -280,6 +280,7 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
   /* user code: */
     public SymbolHoc s;
     public int TipSimb;
+    public MaqHOC Maquina;
 
     TabSymb ListSimb = new TabSymb();
 
@@ -757,7 +758,8 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
           // fall through
           case 21: break;
           case 9:
-            { return symbol(AnalizadorSintacSym.NUM, new Float(yytext()));
+            { s=new SymbolHoc("",EnumTipSim.CONST_NUM, new Float(yytext()));
+                        return symbol(AnalizadorSintacSym.NUM,s);
             }
           // fall through
           case 22: break;
@@ -772,9 +774,9 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
           // fall through
           case 24: break;
           case 12:
-            { s = ListSimb.lookup(yytext());
+            { s = Maquina.Tabs.lookup(yytext());
         if(s ==null)
-            s=ListSimb.install(yytext(), EnumTipSim.UNDEF, (float)0.0);
+            s=Maquina.Tabs.install(yytext(), EnumTipSim.UNDEF, (float)0.0);
         switch(s.TipoSim){
             case VAR: 
                 TipSimb = AnalizadorSintacSym.VAR;
