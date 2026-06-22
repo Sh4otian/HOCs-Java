@@ -198,7 +198,7 @@ public class Principal extends javax.swing.JFrame {
             Lector = new FileReader("ArchEnt.txt");
             
             AnalizadorLexico Lex = new AnalizadorLexico(Lector);
-            Lex.Maquina = new MaqHOC();
+            Lex.Maquina = new MaquinaHoc4();
             do{
                 simb = Lex.next_token();
                 CadAux = Integer.toString(simb.sym);
@@ -249,6 +249,51 @@ public class Principal extends javax.swing.JFrame {
                         case AnalizadorSintacSym.OpPot:
                             CadAux = "Token: " + CadAux + " \t identToken: OpPot \t Lexema:" + Lexema+ "\n";
                             break;
+                        case AnalizadorSintacSym.OpMen:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpMen \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.OpMayIg:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpMayIg \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.OpMenIg:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpMenIg \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.OpIgual:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpIgual \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.OpDif:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpDif \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.OpMay:
+                            CadAux = "Token: " + CadAux + " \t identToken: OpMay \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.IF:
+                            CadAux = "Token: " + CadAux + " \t identToken: IF \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.ELSE:
+                            CadAux = "Token: " + CadAux + " \t identToken: ELSE \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.LLAVE_IZQ:
+                            CadAux = "Token: " + CadAux + " \t identToken: LLAVE_IZQ \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.WHILE:
+                            CadAux = "Token: " + CadAux + " \t identToken: WHILE \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.LLAVE_DER:
+                            CadAux = "Token: " + CadAux + " \t identToken: LLAVE_DER \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.FUNCTION:
+                            CadAux = "Token: " + CadAux + " \t identToken: FUNCTION \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.PROCEDURE:
+                            CadAux = "Token: " + CadAux + " \t identToken: PROCEDURE \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.RETURN:
+                            CadAux = "Token: " + CadAux + " \t identToken: RETURN \t Lexema:" + Lexema + "\n";
+                            break;
+                        case AnalizadorSintacSym.COMA:
+                            CadAux = "Token: " + CadAux + " \t identToken: COMA \t Lexema:" + Lexema + "\n";
+                            break;
                     }
                     TxtLexico.append(CadAux);
                 }
@@ -283,7 +328,7 @@ public class Principal extends javax.swing.JFrame {
         try{
            Sintac = new AnalizadorSintac(Lex);
            Sintac.FrmMen = this;
-           Sintac.Maq = new MaqHOC();
+           Sintac.Maq = new MaquinaHoc4();
            Lex.Maquina = Sintac.Maq;
            SymbolHoc s;
            Iterator it = Lex.Maquina.Tabs.ListaSymb.iterator();
@@ -305,6 +350,18 @@ System.out.println("Codigo generado: " + Sintac.Maq.progp);
                CadInst = ""; Name = ""; Valor = ""; ptrFunc = "";
                Instruc=Sintac.Maq.Prog[i];
                CadAux = "\n------------------ERROR------------------\n";
+               if (Instruc.Instruccion == null && Instruc.direccion >= 0) {
+                 CadInst = "DIR";
+                 Valor = Integer.toString(Instruc.direccion);
+
+                 os[0] = CadInst;
+                 os[1] = "";
+                 os[2] = Valor;
+                 os[3] = "";
+
+                 Modelo.addRow(os);
+                 continue;
+                }
                switch(Instruc.TipInst){
                    case INSTRUC:
                        switch(Instruc.Instruccion){
@@ -360,6 +417,33 @@ System.out.println("Codigo generado: " + Sintac.Maq.progp);
                                CadAux = "instruc VARPUSH";
                                CadInst="VARPUSH";
                                break;
+                            case GT:
+                                CadInst = "GT";
+                                break;
+                            case LT:
+                                CadInst = "LT";
+                                break;
+                            case GE:
+                                CadInst = "GE";
+                                break;
+                            case LE:
+                                CadInst = "LE";
+                                break;
+                            case EQ:
+                                CadInst = "EQ";
+                                break;
+                            case NE:
+                                CadInst = "NE";
+                                break;
+                            case JUMP:
+                                CadInst = "JUMP";
+                                break;
+                            case JUMP_TRUE:
+                                CadInst = "JUMP_TRUE";
+                                break;      
+                            case JUMP_FALSE:
+                                CadInst = "JUMP_FALSE";
+                                break;
                        }
                        CadAux+= "\n";
                        TxtLexico.append(CadAux);
@@ -447,6 +531,10 @@ System.out.println("Codigo generado: " + Sintac.Maq.progp);
                                 break;
                        }
                        break;
+                       case null:
+                            CadInst = "DIR";
+                            Valor = Integer.toString(Instruc.direccion);
+                            break;
                }
                os[0]=(Object)CadInst ;
                os[1]=(Object)Name ;

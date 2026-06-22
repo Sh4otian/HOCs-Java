@@ -9,5 +9,30 @@ package src;
  * @author Admin
  */
 public enum EnumMaq {
-    EVAL,ADD,SUB,MUL,DIV,NEGATE,POWER,ASIGN,BLTIN,VARPUSH,CONSTPUSH,PRINT,STOP;
+    EVAL,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    NEGATE,
+    POWER,
+    ASIGN,
+    BLTIN,
+    VARPUSH,
+    CONSTPUSH,
+    PRINT,
+    STOP,
+    //Comparadores y JUMP
+    GT,
+    GE,
+    LT,
+    LE,
+    EQ,
+    NE,
+    JUMP,
+    JUMP_TRUE,
+    JUMP_FALSE,
+    //Implementacion de llamadas
+    CALL,
+    RET;
 }

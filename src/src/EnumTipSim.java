@@ -9,5 +9,5 @@ package src;
  * @author Admin
  */
 public enum EnumTipSim {
-    VAR, UNDEF, BLTIN, CONST_PRED, CONST_NUM;
+    VAR, UNDEF, BLTIN, CONST_PRED, CONST_NUM, FUNCTION, PROCEDURE, PARAM;
 }

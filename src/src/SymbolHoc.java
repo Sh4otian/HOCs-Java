@@ -4,6 +4,8 @@
  */
 package src;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author Admin
@@ -14,8 +16,12 @@ public class SymbolHoc {
     public float val;
     public BLTIN FuncPred;
     
+    public int dirInicio;
+    public int numParams;
+    public java.util.ArrayList<String> listaParams;
+    
     public SymbolHoc(){
-        Nom="";val=0;
+        Nom="";val=0; dirInicio = -1; numParams = 0; listaParams = new java.util.ArrayList<>(); //cada función/procedimiento podrá guardar dónde empieza su código y cuáles son sus parámetros
     }
     
     public SymbolHoc(String nombre, EnumTipSim TipSim, float valor){

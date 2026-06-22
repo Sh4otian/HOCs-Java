@@ -9,7 +9,7 @@ class AnalizadorSintac;
 parser code {:
     public Principal FrmMen;
     public Float var[] = new Float[26];
-    public MaqHOC Maq; 
+    public MaquinaHoc4 Maq; 
 
     public void RepError(String Mensaje, Object Info){
         StringBuilder m = new StringBuilder("Error");
@@ -31,7 +31,9 @@ parser code {:
     }
 :}
 
-terminal OpSum, OpRes, OpProd, OpDiv, OpAsig, OpPot;
+terminal OpSum, OpRes, OpProd, OpDiv, OpAsig, OpPot, OpMay, OpMen, OpMayIg, OpMenIg, OpIgual, OpDif;
+terminal IF, ELSE, WHILE, LLAVE_IZQ, LLAVE_DER;
+terminal FUNCTION, PROCEDURE, RETURN, COMA;
 terminal ParIzq, ParDer, SEMIC;
 terminal SymbolHoc NUM;
 terminal SymbolHoc VAR;
@@ -40,38 +42,171 @@ terminal SymbolHoc BLTIN;
 terminal NEGUNAR;
 
 non terminal list;
+non terminal Integer marca_if;
+non terminal Integer marca_else;
+non terminal Integer marca_inicio_while;
+non terminal bloque,stmt;
 non terminal Integer asign, expr;
+non terminal def_func, lista_param, ret_stmt;
+non terminal Integer marca_func;
+non terminal Integer marca_salta_func;
+non terminal String nombre_func;
+non terminal llamada_func;
+non terminal nombre_llamada;
 
 /*JERARQUIA DE OPERACIONES*/
+precedence nonassoc OpMay, OpMen, OpMayIg, OpMenIg, OpIgual, OpDif;
 precedence right OpAsig;
 precedence left OpSum, OpRes;
 precedence left OpProd, OpDiv;
 precedence left NEGUNAR;
 precedence right OpPot;
 
-list ::= expr SEMIC
+
+list ::= stmt
+       | list stmt
+       | def_func
+       | list def_func
+       ;
+def_func ::= FUNCTION nombre_func:n marca_salta_func:posSalto marca_func:dirIni ParIzq lista_param ParDer LLAVE_IZQ ret_stmt LLAVE_DER {:
+        Maq.Prog[posSalto].direccion = Maq.progp;
+        SymbolHoc s = Maq.Tabs.installFuncion(n, EnumTipSim.FUNCTION, dirIni);
+
+        s.listaParams.clear();
+
+        if (!Maq.nombreParametroActual.equals("")) {
+            s.listaParams.add(Maq.nombreParametroActual);
+            s.numParams = 1;
+        }
+        System.out.println("Funcion registrada: " + s.Nom);
+        System.out.println("Direccion inicial: " + s.dirInicio);
+        :};
+
+lista_param ::= VAR:v
 {:
-    InstruProg in1 = new InstruProg();
-    in1.TipInst = EnumTipInst.INSTRUC;
-    in1.Instruccion = EnumMaq.PRINT;
-    /*
-    InstruProg in2 = new InstruProg();
-    in2.TipInst = EnumTipInst.INSTRUC;
-    in2.Instruccion = EnumMaq.STOP;*/
-
-    Maq.code(in1);
+    Maq.nombreParametroActual = ((SymbolHoc)v).Nom;
 :}
-    | list expr SEMIC {:
+|
+;
+
+ret_stmt ::= RETURN expr SEMIC
+{:
+    InstruProg ret = new InstruProg();
+    ret.TipInst = EnumTipInst.INSTRUC;
+    ret.Instruccion = EnumMaq.RET;
+    Maq.code(ret);
+:}
+;
+
+marca_func ::= {:
+            RESULT = Maq.progp;
+    :};
+
+marca_salta_func ::= {:
+    InstruProg salto = new InstruProg();
+    salto.TipInst = EnumTipInst.INSTRUC;
+    salto.Instruccion = EnumMaq.JUMP;
+    Maq.code(salto);
+
+    InstruProg dir = new InstruProg();
+    dir.TipInst = EnumTipInst.INSTRUC;
+    dir.direccion = -1;
+
+    RESULT = Maq.code(dir);
+    :};
+
+nombre_func ::= VAR:v {:
+    RESULT = ((SymbolHoc)v).Nom;
+    :};
+
+nombre_llamada ::= VAR:v {:
+    Maq.nombreFuncionActual = v.Nom;
+    :};
+
+llamada_func ::= nombre_llamada ParIzq expr ParDer {:
+    SymbolHoc f = Maq.Tabs.lookup(Maq.nombreFuncionActual);
+
+    InstruProg call = new InstruProg();
+    call.TipInst = EnumTipInst.INSTRUC;
+    call.Instruccion = EnumMaq.CALL;
+    call.SymHoc = f;
+    call.numArgs = 1;
+
+    Maq.code(call);
+
+    System.out.println("Llamada a función detectada");
+    :};
+
+stmt ::= expr SEMIC {:
     InstruProg in1 = new InstruProg();
     in1.TipInst = EnumTipInst.INSTRUC;
     in1.Instruccion = EnumMaq.PRINT;
-    /*
-    InstruProg in2 = new InstruProg();
-    in2.TipInst = EnumTipInst.INSTRUC;
-    in2.Instruccion = EnumMaq.STOP;*/
-
     Maq.code(in1);
-:};
+    :}
+
+    | llamada_func SEMIC {:
+    InstruProg in1 = new InstruProg();
+    in1.TipInst = EnumTipInst.INSTRUC;
+    in1.Instruccion = EnumMaq.PRINT;
+    Maq.code(in1);
+    :}
+
+    | IF ParIzq expr ParDer marca_if:posIf bloque ELSE marca_else:posElse bloque {:
+    Maq.Prog[posIf].direccion = posElse + 1;
+    Maq.Prog[posElse].direccion = Maq.progp;
+    :}
+
+    | IF ParIzq expr ParDer marca_if:posDir bloque {:
+    Maq.Prog[posDir].direccion = Maq.progp;
+    :}
+
+    | WHILE ParIzq marca_inicio_while:inicio expr ParDer marca_if:posSalida bloque {:
+    InstruProg salto = new InstruProg();
+    salto.TipInst = EnumTipInst.INSTRUC;
+    salto.Instruccion = EnumMaq.JUMP;
+    Maq.code(salto);
+
+    InstruProg dir = new InstruProg();
+    dir.TipInst = EnumTipInst.INSTRUC;
+    dir.direccion = inicio;
+    Maq.code(dir);
+
+    Maq.Prog[posSalida].direccion = Maq.progp;
+    :};
+
+marca_if ::= {:
+    InstruProg salto = new InstruProg();
+    salto.TipInst = EnumTipInst.INSTRUC;
+    salto.Instruccion = EnumMaq.JUMP_FALSE;
+    Maq.code(salto);
+
+    InstruProg dir = new InstruProg();
+    dir.TipInst = EnumTipInst.INSTRUC;
+    dir.direccion = -1;
+
+    RESULT = Maq.code(dir);
+    :} ;
+
+marca_else ::= {:
+    InstruProg salto = new InstruProg();
+    salto.TipInst = EnumTipInst.INSTRUC;
+    salto.Instruccion = EnumMaq.JUMP;
+    Maq.code(salto);
+
+    InstruProg dir = new InstruProg();
+    dir.TipInst = EnumTipInst.INSTRUC;
+    dir.direccion = -1;
+
+    RESULT = Maq.code(dir);
+    :};
+
+marca_inicio_while ::= {:
+                RESULT = Maq.progp;
+                :};
+
+bloque ::= LLAVE_IZQ list LLAVE_DER
+    ;
+
 asign ::= VAR:v OpAsig expr {:
                 InstruProg in1 = new InstruProg(); 
                 in1.TipInst = EnumTipInst.INSTRUC;
@@ -124,6 +259,47 @@ expr  ::= NUM:n {:
                 RESULT = Maq.code2(in1, in2);
                 :}
     | asign:ind {: RESULT = ind; :}
+    | expr OpMay expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.GT;
+                Maq.code(in);
+                :}
+
+    | expr OpMen expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.LT;
+                Maq.code(in);
+                :}
+
+    | expr OpMayIg expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.GE;
+                Maq.code(in);
+                :}
+
+    | expr OpMenIg expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.LE;
+                Maq.code(in);
+                :}
+
+    | expr OpIgual expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.EQ;
+                Maq.code(in);
+                :}
+
+    | expr OpDif expr{: 
+                InstruProg in = new InstruProg();
+                in.TipInst = EnumTipInst.INSTRUC;
+                in.Instruccion = EnumMaq.NE;
+                Maq.code(in);
+                :}
     | expr OpSum expr {:
                 InstruProg in1 = new InstruProg();
                 in1.TipInst = EnumTipInst.INSTRUC;

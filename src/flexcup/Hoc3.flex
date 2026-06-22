@@ -13,7 +13,7 @@ import java.io.Reader;
 %{
     public SymbolHoc s;
     public int TipSimb;
-    public MaqHOC Maquina;
+    public MaquinaHoc4 Maquina;
 
     TabSymb ListSimb = new TabSymb();
 
@@ -25,6 +25,10 @@ import java.io.Reader;
     }
 %}
 
+%eofval{
+    return new java_cup.runtime.Symbol(AnalizadorSintacSym.EOF);
+%eofval}
+
 Letra=[a-zA-Z]
 Digito=[0-9]
 %%
@@ -33,6 +37,13 @@ Digito=[0-9]
 {Digito}+(\.{Digito}+)?                 { s=new SymbolHoc("",EnumTipSim.CONST_NUM, new Float(yytext()));
                         return symbol(AnalizadorSintacSym.NUM,s);
                         }
+//Operadores Relacionales
+">="                { return symbol(AnalizadorSintacSym.OpMayIg); }
+"<="                { return symbol(AnalizadorSintacSym.OpMenIg); }
+"=="                { return symbol(AnalizadorSintacSym.OpIgual); }
+"!="                { return symbol(AnalizadorSintacSym.OpDif); }
+">"                 { return symbol(AnalizadorSintacSym.OpMay); }
+"<"                 { return symbol(AnalizadorSintacSym.OpMen); }
 "="                 { return symbol(AnalizadorSintacSym.OpAsig); }
 "/"                 { return symbol(AnalizadorSintacSym.OpDiv); }
 "*"                 { return symbol(AnalizadorSintacSym.OpProd); }
@@ -40,7 +51,18 @@ Digito=[0-9]
 "-"                 { return symbol(AnalizadorSintacSym.OpRes); }
 ")"                 { return symbol(AnalizadorSintacSym.ParDer); }
 "("                 { return symbol(AnalizadorSintacSym.ParIzq); }
-\^                 { return symbol(AnalizadorSintacSym.OpPot); }
+\^                  { return symbol(AnalizadorSintacSym.OpPot); }
+"if"                { return symbol(AnalizadorSintacSym.IF); }
+"else"              { return symbol(AnalizadorSintacSym.ELSE); }
+"while"             { return symbol(AnalizadorSintacSym.WHILE); }
+
+"{"                 { return symbol(AnalizadorSintacSym.LLAVE_IZQ); }
+"}"                 { return symbol(AnalizadorSintacSym.LLAVE_DER); }
+
+"function"          { return symbol(AnalizadorSintacSym.FUNCTION); }
+"procedure"         { return symbol(AnalizadorSintacSym.PROCEDURE); }
+"return"            { return symbol(AnalizadorSintacSym.RETURN); }
+","                 { return symbol(AnalizadorSintacSym.COMA); }
 {Letra}({Letra}|{Digito})*      {
 
         s = Maquina.Tabs.lookup(yytext());

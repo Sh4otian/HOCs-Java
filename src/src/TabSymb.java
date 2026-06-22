@@ -41,6 +41,22 @@ public class TabSymb {
         ListaSymb.add(s);
         return s;
     }
+    //registrar funciones y procedimientos
+    public SymbolHoc installFuncion(String Nam, EnumTipSim Tipo, int dirInicio) {
+        SymbolHoc s = lookup(Nam);
+        
+        if (s == null) {
+            s = new SymbolHoc();
+            s.Nom = Nam;
+            ListaSymb.add(s);
+        }
+
+        s.TipoSim = Tipo;
+        s.dirInicio = dirInicio;
+        s.numParams = 0;
+
+        return s;
+    }
     public void init(){
         ListaSymb.clear();
         InitConstPredef();

@@ -8,22 +8,37 @@ package flexcup;
 /** CUP generated class containing symbol constants. */
 public class AnalizadorSintacSym {
   /* terminals */
-  public static final int NUM = 11;
-  public static final int OpDiv = 5;
-  public static final int ParDer = 9;
-  public static final int SEMIC = 10;
-  public static final int CONST_PRED = 13;
-  public static final int EOF = 0;
-  public static final int VAR = 12;
+  public static final int PROCEDURE = 20;
+  public static final int ParDer = 24;
+  public static final int OpMen = 9;
+  public static final int CONST_PRED = 28;
+  public static final int ELSE = 15;
+  public static final int OpMenIg = 11;
+  public static final int WHILE = 16;
+  public static final int NEGUNAR = 30;
+  public static final int RETURN = 21;
   public static final int OpProd = 4;
-  public static final int OpSum = 2;
-  public static final int OpRes = 3;
+  public static final int OpDiv = 5;
+  public static final int FUNCTION = 19;
+  public static final int IF = 14;
+  public static final int NUM = 26;
+  public static final int OpMay = 8;
   public static final int OpAsig = 6;
-  public static final int OpPot = 7;
+  public static final int SEMIC = 25;
+  public static final int COMA = 22;
+  public static final int EOF = 0;
+  public static final int OpDif = 13;
+  public static final int OpMayIg = 10;
+  public static final int BLTIN = 29;
   public static final int error = 1;
-  public static final int BLTIN = 14;
-  public static final int NEGUNAR = 15;
-  public static final int ParIzq = 8;
+  public static final int OpRes = 3;
+  public static final int LLAVE_IZQ = 17;
+  public static final int LLAVE_DER = 18;
+  public static final int OpSum = 2;
+  public static final int VAR = 27;
+  public static final int OpIgual = 12;
+  public static final int ParIzq = 23;
+  public static final int OpPot = 7;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -33,6 +48,21 @@ public class AnalizadorSintacSym {
   "OpDiv",
   "OpAsig",
   "OpPot",
+  "OpMay",
+  "OpMen",
+  "OpMayIg",
+  "OpMenIg",
+  "OpIgual",
+  "OpDif",
+  "IF",
+  "ELSE",
+  "WHILE",
+  "LLAVE_IZQ",
+  "LLAVE_DER",
+  "FUNCTION",
+  "PROCEDURE",
+  "RETURN",
+  "COMA",
   "ParIzq",
   "ParDer",
   "SEMIC",

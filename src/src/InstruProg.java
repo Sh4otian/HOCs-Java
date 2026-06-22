@@ -14,4 +14,7 @@ public class InstruProg {
     
     public BLTIN Func_BLTIN;
     public SymbolHoc SymHoc;
+    
+    public int direccion;
+    public int numArgs;
 }

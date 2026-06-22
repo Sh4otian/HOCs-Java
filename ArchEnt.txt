@@ -1,3 +1,9 @@
-x=2+8-6;
-y=2+x;
-z=x+y;
+x=100;
+
+function cuadrado(x){
+    return x*x;
+}
+
+cuadrado(5);
+
+x;
